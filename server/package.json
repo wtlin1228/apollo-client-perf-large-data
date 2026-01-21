@@ -13,10 +13,19 @@
   "type": "module",
   "dependencies": {
     "@apollo/server": "^5.2.0",
-    "graphql": "^16.12.0"
+    "@as-integrations/express5": "^1.0.0",
+    "@graphql-tools/schema": "^10.0.31",
+    "cors": "^2.8.5",
+    "express": "^5.2.1",
+    "graphql": "^16.12.0",
+    "graphql-subscriptions": "^2.0.0",
+    "graphql-ws": "^5.16.0",
+    "ws": "^8.19.0"
   },
   "devDependencies": {
     "@types/node": "^25.0.9",
+    "@types/cors": "^2.8.19",
+    "@types/ws": "^8.18.0",
     "typescript": "^5.9.3"
   }
 }

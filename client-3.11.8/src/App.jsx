@@ -2,7 +2,7 @@ import { useState } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
-import { gql, useQuery } from "@apollo/client";
+import { gql, useQuery, useSubscription } from "@apollo/client";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -17,8 +17,9 @@ function App() {
           <img src={reactLogo} className="logo react" alt="React logo" />
         </a>
       </div>
-      <h1>Env + Cake</h1>
+      <h1>Env + Cake + Cookie</h1>
 
+      <SubNumberInc />
       <Env />
       <Cake />
 
@@ -265,4 +266,18 @@ function Cookie() {
       <div>Cookie.name: {data.cookie.name}</div>
     </div>
   );
+}
+
+const Sub = gql`
+  subscription SubNumberInc {
+    numberIncremented
+  }
+`;
+
+function SubNumberInc() {
+  const { data, loading } = useSubscription(Sub);
+
+  console.log(data);
+
+  return <div>Sub: {!loading && data.numberIncremented}</div>;
 }

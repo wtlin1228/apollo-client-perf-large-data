@@ -1,5 +1,20 @@
 import { ApolloServer } from "@apollo/server";
-import { startStandaloneServer } from "@apollo/server/standalone";
+import { expressMiddleware } from "@as-integrations/express5";
+import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
+import express from "express";
+import { createServer } from "http";
+import { makeExecutableSchema } from "@graphql-tools/schema";
+import { WebSocketServer } from "ws";
+import { useServer } from "graphql-ws/lib/use/ws";
+import { PubSub } from "graphql-subscriptions";
+import bodyParser from "body-parser";
+import cors from "cors";
+
+const PORT = 4000;
+const pubsub = new PubSub();
+
+// A number that we'll increment over time to simulate subscription events
+let currentNumber = 0;
 
 const typeDefs = `#graphql
   type E {
@@ -47,6 +62,10 @@ const typeDefs = `#graphql
     e: E
     cake: Cake
     cookie: Cookie
+  }
+
+  type Subscription {
+    numberIncremented: Int
   }
 `;
 
@@ -159,15 +178,65 @@ const resolvers = {
     cake: makeGetCake(),
     cookie: makeGetCookie(),
   },
+  Subscription: {
+    numberIncremented: {
+      subscribe: () => pubsub.asyncIterator(["NUMBER_INCREMENTED"]),
+    },
+  },
 };
 
+const schema = makeExecutableSchema({ typeDefs, resolvers });
+
+const app = express();
+const httpServer = createServer(app);
+
+const wsServer = new WebSocketServer({
+  server: httpServer,
+  path: "/graphql",
+});
+const serverCleanup = useServer({ schema }, wsServer);
+
 const server = new ApolloServer({
-  typeDefs,
-  resolvers,
+  schema,
+  plugins: [
+    // Proper shutdown for the HTTP server.
+    ApolloServerPluginDrainHttpServer({ httpServer }),
+
+    // Proper shutdown for the WebSocket server.
+    {
+      async serverWillStart() {
+        return {
+          async drainServer() {
+            await serverCleanup.dispose();
+          },
+        };
+      },
+    },
+  ],
 });
 
-const { url } = await startStandaloneServer(server, {
-  listen: { port: 4000 },
+await server.start();
+app.use(
+  "/graphql",
+  cors<cors.CorsRequest>(),
+  bodyParser.json(),
+  expressMiddleware(server),
+);
+
+// Now that our HTTP server is fully set up, actually listen.
+httpServer.listen(PORT, () => {
+  console.log(`🚀 Query endpoint ready at http://localhost:${PORT}/graphql`);
+  console.log(
+    `🚀 Subscription endpoint ready at ws://localhost:${PORT}/graphql`,
+  );
 });
 
-console.log(`🚀  Server ready at: ${url}`);
+// In the background, increment a number every second and notify subscribers when it changes.
+function incrementNumber() {
+  currentNumber++;
+  pubsub.publish("NUMBER_INCREMENTED", { numberIncremented: currentNumber });
+  setTimeout(incrementNumber, 1000);
+}
+
+// Start incrementing
+incrementNumber();
