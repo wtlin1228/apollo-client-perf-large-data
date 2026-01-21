@@ -5,8 +5,6 @@ import "./App.css";
 import { gql, useQuery, useSubscription } from "@apollo/client";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
     <>
       <div>
@@ -19,132 +17,12 @@ function App() {
       </div>
       <h1>Env + Cake + Cookie</h1>
 
-      <SubNumberInc />
-      <Env />
-      <Cake />
-
-      {/* <Cake />
-      <Cake />
-      <Cake />
-      <Cake />
-      <Cake />
-      <Cake />
-      <Cake />
-      <Cake />
-      <Cake />
-      <Cake />
-      <Cake />
-      <Cake /> */}
-
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
-      <Cookie />
+      <div style={{ display: "flex", flexDirection: "column", gap: "28px" }}>
+        <SubNumberInc />
+        <Env />
+        <Cake />
+        <Cookie />
+      </div>
     </>
   );
 }
@@ -275,9 +153,9 @@ const Sub = gql`
 `;
 
 function SubNumberInc() {
-  const { data, loading } = useSubscription(Sub);
-
-  console.log(data);
+  const { data, loading } = useSubscription(Sub, {
+    // fetchPolicy: "no-cache",
+  });
 
   return <div>Sub: {!loading && data.numberIncremented}</div>;
 }
