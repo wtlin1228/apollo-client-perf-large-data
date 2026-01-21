@@ -40,7 +40,7 @@ const client = new ApolloClient({
   link: splitLink,
   cache: new InMemoryCache(),
   devtools: {
-    enabled: true,
+    enabled: false,
   },
 });
 

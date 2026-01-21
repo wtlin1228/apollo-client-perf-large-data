@@ -21,24 +21,40 @@ const typeDefs = `#graphql
     id: ID
     name: String
     bs: [B]
+
+    field1: String
+    field2: String
+    field3: String
   }
 
   type B {
     id: ID
     name: String
     ls: [L]
+
+    field1: String
+    field2: String
+    field3: String
   }
 
   type L {
     id: ID
     name: String
     gs: [G]
+
+    field1: String
+    field2: String
+    field3: String
   }
 
   type G {
     id: ID
     name: String
     ms: [M]
+
+    field1: String
+    field2: String
+    field3: String
   }
 
   type M {
@@ -46,6 +62,10 @@ const typeDefs = `#graphql
     name: String
     is: [Float]
     vs: [Float]
+
+    field1: String
+    field2: String
+    field3: String
   }
 
   type Cake {
@@ -60,6 +80,10 @@ const typeDefs = `#graphql
 
   type Query {
     e: E
+    b(id: ID!): B
+    l(id: ID!): L
+    g(id: ID!): G
+    m(id: ID!): M
     cake: Cake
     cookie: Cookie
   }
@@ -76,7 +100,10 @@ const MS = 3;
 const IS = 4_000;
 const VS = 4_000;
 
-const bs = [];
+const all_bs = [];
+const all_ls = [];
+const all_gs = [];
+const all_ms = [];
 for (let b = 1; b <= BS; b++) {
   const ls = [];
   for (let l = 1; l <= LS; l++) {
@@ -92,24 +119,57 @@ for (let b = 1; b <= BS; b++) {
         for (let v = 1; v <= VS; v++) {
           vs.push(Math.random() * 2_000 - 1_000);
         }
-        ms.push({
+        const data = {
           id: `m_${b}_${l}_${g}_${m}`,
           name: `M_${b}_${l}_${g}_${m}`,
           is,
           vs,
-        });
+          field1: `m_${b}_${l}_${g}_${m} field1`,
+          field2: `m_${b}_${l}_${g}_${m} field2`,
+          field3: `m_${b}_${l}_${g}_${m} field3`,
+        };
+        ms.push(data);
+        all_ms.push(data);
       }
-      gs.push({ id: `g_${b}_${l}_${g}`, name: `G_${b}_${l}_${g}`, ms });
+      const data = {
+        id: `g_${b}_${l}_${g}`,
+        name: `G_${b}_${l}_${g}`,
+        ms,
+        field1: `g_${b}_${l}_${g} field1`,
+        field2: `g_${b}_${l}_${g} field2`,
+        field3: `g_${b}_${l}_${g} field3`,
+      };
+      gs.push(data);
+      all_gs.push(data);
     }
-    ls.push({ id: `l_${b}_${l}`, name: `L_${b}_${l}`, gs });
+    const data = {
+      id: `l_${b}_${l}`,
+      name: `L_${b}_${l}`,
+      gs,
+      field1: `l_${b}_${l} field1`,
+      field2: `l_${b}_${l} field2`,
+      field3: `l_${b}_${l} field3`,
+    };
+    ls.push(data);
+    all_ls.push(data);
   }
-  bs.push({ id: `b_${b}`, name: `B_${b}`, ls });
+  all_bs.push({
+    id: `b_${b}`,
+    name: `B_${b}`,
+    ls,
+    field1: `b_${b} field1`,
+    field2: `b_${b} field2`,
+    field3: `b_${b} field3`,
+  });
 }
 
 const e = {
   id: "e1",
   name: "E1",
-  bs,
+  bs: all_bs,
+  field1: "e1 field1",
+  field2: "e1 field2",
+  field3: "e1 field3",
 };
 
 const cakes = [
@@ -175,6 +235,10 @@ const makeGetCookie = () => {
 const resolvers = {
   Query: {
     e: () => e,
+    b: (_, args) => all_bs.find((x) => x.id === args.id),
+    l: (_, args) => all_ls.find((x) => x.id === args.id),
+    g: (_, args) => all_gs.find((x) => x.id === args.id),
+    m: (_, args) => all_ms.find((x) => x.id === args.id),
     cake: makeGetCake(),
     cookie: makeGetCookie(),
   },
