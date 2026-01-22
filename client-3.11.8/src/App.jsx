@@ -18,12 +18,81 @@ function App() {
 
       <div style={{ display: "flex", flexDirection: "column", gap: "28px" }}>
         <SubNumberInc />
-        <Env />
-        <Env1 />
+        <Cake />
         <Cake />
         <Cookie />
+        <EntireE />
+        <Env />
       </div>
     </>
+  );
+}
+
+const GetEntireE = gql`
+  query QueryEntireE {
+    e {
+      __typename
+      id
+      name
+      field1
+      field2
+      field3
+      bs {
+        __typename
+        id
+        name
+        field1
+        field2
+        field3
+        ls {
+          __typename
+          id
+          name
+          field1
+          field2
+          field3
+          gs {
+            __typename
+            id
+            name
+            field1
+            field2
+            field3
+            ms {
+              __typename
+              id
+              name
+              is
+              vs
+              field1
+              field2
+              field3
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+function EntireE() {
+  const { data, loading, refetch } = useQuery(GetEntireE);
+
+  if (loading) {
+    return <div>EntireE loading...</div>;
+  }
+
+  return (
+    <div>
+      <button
+        onClick={() => {
+          refetch();
+        }}
+      >
+        refetch entire env
+      </button>
+      <div>EntireE loaded</div>
+    </div>
   );
 }
 
@@ -96,84 +165,6 @@ function Env() {
           ))}
         </div>
       ))}
-    </div>
-  );
-}
-
-const GetE1 = gql`
-  fragment EField1 on E {
-    field1
-  }
-
-  fragment BField1 on B {
-    field1
-  }
-
-  fragment LField1 on L {
-    field1
-  }
-
-  fragment GField1 on G {
-    field1
-  }
-
-  fragment MField1 on M {
-    field1
-  }
-
-  query QueryE {
-    e {
-      __typename
-      id
-      name
-      ...EField1
-      bs {
-        __typename
-        id
-        name
-        ...BField1
-        ls {
-          __typename
-          id
-          name
-          ...LField1
-          gs {
-            __typename
-            id
-            name
-            ...GField1
-            ms {
-              __typename
-              id
-              name
-              ...MField1
-              is
-              vs
-            }
-          }
-        }
-      }
-    }
-  }
-`;
-
-function Env1() {
-  const { data, loading, refetch } = useQuery(GetE1);
-
-  if (loading) {
-    return <div>Env1 loading...</div>;
-  }
-
-  return (
-    <div>
-      <button
-        onClick={() => {
-          refetch();
-        }}
-      >
-        refetch env1
-      </button>
-      <div>Env1 loaded</div>
     </div>
   );
 }

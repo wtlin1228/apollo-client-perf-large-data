@@ -16,6 +16,86 @@ const pubsub = new PubSub();
 // A number that we'll increment over time to simulate subscription events
 let currentNumber = 0;
 
+const BS = 2;
+const LS = 2;
+const GS = 3;
+const MS = 3;
+const IS = 4_000;
+const VS = 4_000;
+
+const all_bs = [];
+const all_ls = [];
+const all_gs = [];
+const all_ms = [];
+
+const e = {
+  id: "e1",
+  name: "E1",
+  bs: all_bs,
+  field1: "e1 field1",
+  field2: "e1 field2",
+  field3: "e1 field3",
+};
+
+for (let b = 1; b <= BS; b++) {
+  const ls = [];
+  for (let l = 1; l <= LS; l++) {
+    const gs = [];
+    for (let g = 1; g <= GS; g++) {
+      const ms = [];
+      for (let m = 1; m <= MS; m++) {
+        const is = [];
+        for (let i = 1; i <= IS; i++) {
+          is.push(Math.random() * 2_000 - 1_000);
+        }
+        const vs = [];
+        for (let v = 1; v <= VS; v++) {
+          vs.push(Math.random() * 2_000 - 1_000);
+        }
+        const data = {
+          id: `m_${b}_${l}_${g}_${m}`,
+          name: `M_${b}_${l}_${g}_${m}`,
+          is,
+          vs,
+          field1: `m_${b}_${l}_${g}_${m} field1`,
+          field2: `m_${b}_${l}_${g}_${m} field2`,
+          field3: `m_${b}_${l}_${g}_${m} field3`,
+        };
+        ms.push(data);
+        all_ms.push(data);
+      }
+      const data = {
+        id: `g_${b}_${l}_${g}`,
+        name: `G_${b}_${l}_${g}`,
+        ms,
+        field1: `g_${b}_${l}_${g} field1`,
+        field2: `g_${b}_${l}_${g} field2`,
+        field3: `g_${b}_${l}_${g} field3`,
+      };
+      gs.push(data);
+      all_gs.push(data);
+    }
+    const data = {
+      id: `l_${b}_${l}`,
+      name: `L_${b}_${l}`,
+      gs,
+      field1: `l_${b}_${l} field1`,
+      field2: `l_${b}_${l} field2`,
+      field3: `l_${b}_${l} field3`,
+    };
+    ls.push(data);
+    all_ls.push(data);
+  }
+  all_bs.push({
+    id: `b_${b}`,
+    name: `B_${b}`,
+    ls,
+    field1: `b_${b} field1`,
+    field2: `b_${b} field2`,
+    field3: `b_${b} field3`,
+  });
+}
+
 const typeDefs = `#graphql
   type E {
     id: ID
@@ -92,85 +172,6 @@ const typeDefs = `#graphql
     numberIncremented: Int
   }
 `;
-
-const BS = 2;
-const LS = 2;
-const GS = 3;
-const MS = 3;
-const IS = 4_000;
-const VS = 4_000;
-
-const all_bs = [];
-const all_ls = [];
-const all_gs = [];
-const all_ms = [];
-for (let b = 1; b <= BS; b++) {
-  const ls = [];
-  for (let l = 1; l <= LS; l++) {
-    const gs = [];
-    for (let g = 1; g <= GS; g++) {
-      const ms = [];
-      for (let m = 1; m <= MS; m++) {
-        const is = [];
-        for (let i = 1; i <= IS; i++) {
-          is.push(Math.random() * 2_000 - 1_000);
-        }
-        const vs = [];
-        for (let v = 1; v <= VS; v++) {
-          vs.push(Math.random() * 2_000 - 1_000);
-        }
-        const data = {
-          id: `m_${b}_${l}_${g}_${m}`,
-          name: `M_${b}_${l}_${g}_${m}`,
-          is,
-          vs,
-          field1: `m_${b}_${l}_${g}_${m} field1`,
-          field2: `m_${b}_${l}_${g}_${m} field2`,
-          field3: `m_${b}_${l}_${g}_${m} field3`,
-        };
-        ms.push(data);
-        all_ms.push(data);
-      }
-      const data = {
-        id: `g_${b}_${l}_${g}`,
-        name: `G_${b}_${l}_${g}`,
-        ms,
-        field1: `g_${b}_${l}_${g} field1`,
-        field2: `g_${b}_${l}_${g} field2`,
-        field3: `g_${b}_${l}_${g} field3`,
-      };
-      gs.push(data);
-      all_gs.push(data);
-    }
-    const data = {
-      id: `l_${b}_${l}`,
-      name: `L_${b}_${l}`,
-      gs,
-      field1: `l_${b}_${l} field1`,
-      field2: `l_${b}_${l} field2`,
-      field3: `l_${b}_${l} field3`,
-    };
-    ls.push(data);
-    all_ls.push(data);
-  }
-  all_bs.push({
-    id: `b_${b}`,
-    name: `B_${b}`,
-    ls,
-    field1: `b_${b} field1`,
-    field2: `b_${b} field2`,
-    field3: `b_${b} field3`,
-  });
-}
-
-const e = {
-  id: "e1",
-  name: "E1",
-  bs: all_bs,
-  field1: "e1 field1",
-  field2: "e1 field2",
-  field3: "e1 field3",
-};
 
 const cakes = [
   "Chocolate Fudge Cake",
